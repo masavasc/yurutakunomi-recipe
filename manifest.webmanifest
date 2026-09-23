@@ -1,0 +1,9 @@
+{
+  "name": "ゆる宅飲み レシピ検索",
+  "short_name": "ゆる宅飲み",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "ja"
+}
