@@ -1,6 +1,19 @@
 /* Scientific / Clinical Database: drop-in stylesheet */
 *{box-sizing:border-box}
-:root{color-scheme:light;--accent:#086474;--navy:#18364a;--cyan:#0b8193;--highlight:#b77932;--text:#18212b;--muted:#526776;--line:#dce5ea;--bg:#f8f4ef;--chip:#fff;--soft:#f2ece5}
+[hidden]{display:none!important}
+.view-switch{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.view-button{flex:1 1 auto;min-height:44px;padding:8px;border:1px solid #bcced8;border-radius:4px;background:#fff;color:var(--navy);font-size:13px;font-weight:650;cursor:pointer;touch-action:manipulation}
+.view-button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.view-button span{font-variant-numeric:tabular-nums;margin-left:3px}
+.view-hint,.storage-notice{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.7}
+.storage-notice{padding:10px;border:1px solid var(--accent);background:#e7f2f5}
+.recipe-row{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.recipe-row:last-child{border-bottom:0}
+.recipe-row .recipe{flex:1;min-width:0;border-bottom:0}
+.favorite-button{flex:0 0 44px;width:44px;height:44px;margin-right:8px;padding:0;border:1px solid #bcced8;border-radius:4px;background:#fff;color:var(--accent);font-size:27px;cursor:pointer;touch-action:manipulation}
+.favorite-button[aria-pressed="true"]{background:#e7f2f5;border-color:var(--accent)}
+.favorite-button:focus-visible,.view-button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+:root{color-scheme:light;--accent:#086474;--navy:#18364a;--cyan:#0b8193;--highlight:#0b8193;--text:#18212b;--muted:#526776;--line:#dce5ea;--bg:#f6f8fa;--chip:#fff;--soft:#edf3f6}
 html{-webkit-text-size-adjust:100%;background:var(--bg)}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Sans","Yu Gothic UI",sans-serif;color:var(--text);background:var(--bg);line-height:1.5}
 button,input{font:inherit}
@@ -39,3 +52,4 @@ input::placeholder{color:#607482;opacity:1}
 .recipe:focus-visible{position:relative;z-index:1}
 @media(hover:hover){.chip:not(.active):hover{border-color:var(--cyan);background:#edf6f8}.chip.active:hover{background:#074f5c}.clear-input:hover{background:#e7f2f5}.recipe:hover{background:#f0f7f9}.recipe:hover .recipe-name{text-decoration:underline;text-underline-offset:3px}}
 @media(min-width:700px){.app{padding-left:28px;padding-right:28px;border-left:1px solid var(--line);border-right:1px solid var(--line)}.topbar{padding-top:22px;padding-bottom:19px}.topbar h1{font-size:21px}.filters{padding-top:24px}.recipe{padding:16px}}
+
