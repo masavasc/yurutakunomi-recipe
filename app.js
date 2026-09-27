@@ -1,6 +1,8 @@
 const CATEGORIES = ["牛肉", "豚肉", "鶏肉", "魚介", "卵", "野菜", "ご飯もの", "麺類", "その他"];
+const SOURCES = ["和田明日香", "タサン志麻"];
 const TYPES = ["和える", "炒める", "その他", "煮る", "サラダ", "揚げる", "汁物", "焼く"];
 
+let selectedSource = "";
 let selectedCategory = "";
 let selectedType = "";
 let view = "search";
@@ -62,7 +64,8 @@ function makeChips(container, values, kind) {
     b.dataset.value = value;
     b.addEventListener("click", () => {
       view = "search";
-      if (kind === "category") selectedCategory = selectedCategory === value ? "" : value;
+      if (kind === "source") selectedSource = selectedSource === value ? "" : value;
+      else if (kind === "category") selectedCategory = selectedCategory === value ? "" : value;
       else selectedType = selectedType === value ? "" : value;
       syncChips();
       render();
@@ -72,6 +75,7 @@ function makeChips(container, values, kind) {
 }
 
 function syncChips() {
+  document.querySelectorAll("#sourceChips .chip").forEach(b => b.classList.toggle("active", b.dataset.value === selectedSource));
   document.querySelectorAll("#categoryChips .chip").forEach(b => b.classList.toggle("active", b.dataset.value === selectedCategory));
   document.querySelectorAll("#typeChips .chip").forEach(b => b.classList.toggle("active", b.dataset.value === selectedType));
 }
@@ -82,11 +86,12 @@ function filteredRecipes() {
   const ingredient = norm($("#ingredientInput").value);
   const keyword = norm($("#keywordInput").value);
   return window.RECIPES.filter(r => {
+    if (selectedSource && r.source !== selectedSource) return false;
     if (selectedCategory && r.category !== selectedCategory) return false;
     if (selectedType && r.type !== selectedType) return false;
     if (ingredient && !norm(r.ingredients).includes(ingredient)) return false;
     if (keyword) {
-      const hay = norm([r.name,r.category,r.type,r.ingredients,r.feature,r.search].join(" "));
+      const hay = norm([r.name,r.category,r.type,r.ingredients,r.feature,r.search,r.source].join(" "));
       if (!hay.includes(keyword)) return false;
     }
     return true;
@@ -120,7 +125,7 @@ function render() {
     a.innerHTML = `
       <div class="recipe-main">
         <div class="recipe-name">${escapeHtml(r.name)}</div>
-        <div class="recipe-meta">${escapeHtml(r.category)} ｜ ${escapeHtml(r.type)}</div>
+        <div class="recipe-meta">${escapeHtml(r.source || "")} ｜ ${escapeHtml(r.category)} ｜ ${escapeHtml(r.type)}</div>
         ${r.ingredients ? `<div class="recipe-ingredients">${escapeHtml(r.ingredients)}</div>` : ""}
       </div>
       <div class="chev">›</div>`;
@@ -156,6 +161,7 @@ function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
+makeChips($("#sourceChips"), SOURCES, "source");
 makeChips($("#categoryChips"), CATEGORIES, "category");
 makeChips($("#typeChips"), TYPES, "type");
 
