@@ -9,6 +9,11 @@ let view = "search";
 const STORE = {favorites: "yurutakunomi.favorites.v1", recent: "yurutakunomi.recent.v1"};
 // Official URLs remain stable when the database order or recipe names change.
 const byUrl = new Map(window.RECIPES.map(r => [r.url, r]));
+// Convert saved search URLs from the previous release into verified recipe URLs.
+// These legacy URLs are lookup keys only; recipe links always use recipes.js.
+const legacyUrls = new Map(window.RECIPES
+  .filter(r => r.source === "タサン志麻")
+  .map(r => ["https://www.kyounoryouri.jp/search/recipe?keyword=" + encodeURIComponent(r.name) + "&order_type=1", r.url]));
 let favorites = new Set(readSaved(STORE.favorites));
 let recent = readSaved(STORE.recent).slice(0, 10);
 
@@ -21,7 +26,13 @@ function storageNotice() {
 function readSaved(key) {
   try {
     const value = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(value) ? [...new Set(value.filter(url => typeof url === "string" && byUrl.has(url)))] : [];
+    if (!Array.isArray(value)) return [];
+    const migrated = [...new Set(value
+      .filter(url => typeof url === "string")
+      .map(url => legacyUrls.get(url) || url)
+      .filter(url => byUrl.has(url)))];
+    if (value.some(url => legacyUrls.has(url))) save(key, migrated);
+    return migrated;
   } catch (error) {
     if (!(error instanceof SyntaxError)) storageNotice();
     return [];
