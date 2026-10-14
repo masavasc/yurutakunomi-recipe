@@ -1,5 +1,5 @@
 const CATEGORIES = ["牛肉", "豚肉", "鶏肉", "魚介", "卵", "野菜", "ご飯もの", "麺類", "その他"];
-const SOURCES = ["和田明日香", "タサン志麻"];
+const SOURCES = ["和田明日香", "タサン志麻", "藤井恵"];
 const TYPES = ["和える", "炒める", "その他", "煮る", "サラダ", "揚げる", "汁物", "焼く"];
 
 let selectedSource = "";
@@ -9,11 +9,7 @@ let view = "search";
 const STORE = {favorites: "yurutakunomi.favorites.v1", recent: "yurutakunomi.recent.v1"};
 // Official URLs remain stable when the database order or recipe names change.
 const byUrl = new Map(window.RECIPES.map(r => [r.url, r]));
-// Convert saved search URLs from the previous release into verified recipe URLs.
-// These legacy URLs are lookup keys only; recipe links always use recipes.js.
-const legacyUrls = new Map(window.RECIPES
-  .filter(r => r.source === "タサン志麻")
-  .map(r => ["https://www.kyounoryouri.jp/search/recipe?keyword=" + encodeURIComponent(r.name) + "&order_type=1", r.url]));
+const legacyUrls = new Map(window.RECIPES.filter(r => r.legacyUrl).map(r => [r.legacyUrl, r.url]));
 let favorites = new Set(readSaved(STORE.favorites));
 let recent = readSaved(STORE.recent).slice(0, 10);
 
@@ -27,11 +23,9 @@ function readSaved(key) {
   try {
     const value = JSON.parse(localStorage.getItem(key) || "[]");
     if (!Array.isArray(value)) return [];
-    const migrated = [...new Set(value
-      .filter(url => typeof url === "string")
-      .map(url => legacyUrls.get(url) || url)
-      .filter(url => byUrl.has(url)))];
-    if (value.some(url => legacyUrls.has(url))) save(key, migrated);
+    const migrated = [...new Set(value.filter(url => typeof url === "string")
+      .map(url => legacyUrls.get(url) || url).filter(url => byUrl.has(url)))];
+    if (JSON.stringify(migrated) !== JSON.stringify(value)) save(key, migrated);
     return migrated;
   } catch (error) {
     if (!(error instanceof SyntaxError)) storageNotice();
